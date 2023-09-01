@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>T-Rex Game</title>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const camera = { x: 0, y: 0 };
+        const tRex = { x: canvas.width / 2, y: canvas.height / 2, width: 40, height: 40 };
+        const obstacles = [];
+
+        function generateObstacle() {
+            const obstacle = { x: camera.x + canvas.width, y: canvas.height - 40, width: 20, height: 40 };
+            obstacles.push(obstacle);
+        }
+
+        function update() {
+            // Move camera
+            camera.x += 5;
+
+            // Generate obstacles
+            if (Math.random() < 0.02) {
+                generateObstacle();
+            }
+
+            // Update obstacle positions
+            for (const obstacle of obstacles) {
+                obstacle.x -= 5;
+            }
+
+            // Collision detection
+            for (const obstacle of obstacles) {
+                if (tRex.x < obstacle.x + obstacle.width &&
+                    tRex.x + tRex.width > obstacle.x &&
+                    tRex.y < obstacle.y + obstacle.height &&
+                    tRex.y + tRex.height > obstacle.y) {
+                    // Game over
+                    alert('Game over!');
+                    document.location.reload();
+                }
+            }
+
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw T-Rex
+            ctx.fillStyle = 'green';
+            ctx.fillRect(tRex.x - camera.x, tRex.y, tRex.width, tRex.height);
+
+            // Draw obstacles
+            ctx.fillStyle = 'red';
+            for (const obstacle of obstacles) {
+                ctx.fillRect(obstacle.x - camera.x, obstacle.y, obstacle.width, obstacle.height);
+            }
+
+            // Request animation frame
+            requestAnimationFrame(update);
+        }
+
+        update(); // Start the game loop
+    </script>
+</body>
+</html>
